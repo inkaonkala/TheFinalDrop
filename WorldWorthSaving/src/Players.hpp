@@ -91,6 +91,7 @@ class Players
 
 		void standOnPlanet(float angle, const sf::Vector2f& center, float radius, float planetOffset);
 		sf::FloatRect getBounds() const;
+		void reset(const sf::Vector2f& planetCenter, float planetRadius, float planetOffset);
 };
 
 /*

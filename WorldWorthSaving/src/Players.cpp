@@ -245,3 +245,20 @@ sf::FloatRect Players::getBounds() const
 {
 	return sprite.getGlobalBounds();
 }
+
+void Players::reset(const sf::Vector2f& planetCenter, float planetRadius, float planetOffset)
+{
+	// Reset position to starting orbit position
+	orbitAngle = -3.14159f / 2.f;
+	setOrbitPosition(orbitAngle, planetCenter, planetRadius + planetOffset);
+
+	// Reset movement and animation
+	velocity = {0.f, 0.f};
+	currentFrame = 0;
+	animationTimer = 0.f;
+	facingLeft = false;
+
+	// Reset state
+	currentState = PlayerState::atStart;
+	isReturning = false;
+}

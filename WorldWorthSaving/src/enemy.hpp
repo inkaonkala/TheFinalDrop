@@ -30,5 +30,9 @@ class enemy
 		void update(const sf::Vector2f& collectorPos);
 		sf::FloatRect getBounds() const;
 		void setRandomStartPosition(int windowWidth, int windowHeight);
+		void reset(int windowWidth, int windowHeight)
+		{
+			setRandomStartPosition(windowWidth, windowHeight);
+		};
 
 };

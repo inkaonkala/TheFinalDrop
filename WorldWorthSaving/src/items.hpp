@@ -33,6 +33,12 @@ class item
 		void markCollected() { collected = true; }
 		void resetCollected() { collected = false; }
 		sf::Clock& getRespawnClock() { return respawnClock; }
+		void reset()
+		{
+			collected = false;
+			setRandomPosition();
+			respawnClock.restart();
+		};
 		
 
 };

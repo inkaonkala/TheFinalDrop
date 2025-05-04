@@ -39,7 +39,7 @@ void enemy::update(const sf::Vector2f& collectorPos)
 	float lenght = std::sqrt(direc.x * direc.x + direc.y * direc.y);
 	if (lenght != 0)
 		direc /= lenght;
-	float speed = 2.2f; /// ENEMY SPEED!!!
+	float speed = 2.f; /// ENEMY SPEED!!!
 	sprite.move(direc * speed);
 }
 

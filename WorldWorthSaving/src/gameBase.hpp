@@ -104,7 +104,6 @@ class gameBase
 			" ... ... ",
 			" BOOOOOOOOOOOOOOOOOOOOOM!", 
 			" The explosion sends the final drops to the space \n as well as your SOS-flare ...",
-			""
 		};
 
 		sf::Music			storydMusic;
@@ -144,4 +143,5 @@ class gameBase
 		void PlayerSwap(float dTime);
 		void handleMusic();
 		void shootCollector();
+		void resetGame();
 } ;

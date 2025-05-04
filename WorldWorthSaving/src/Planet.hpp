@@ -40,5 +40,10 @@ class Planet
 		float getRadius() const;
 		float getOffset() const;
 		int getStage() const { return growthStage; }
+		void reset()
+		{
+			growthStage = 1;
+			updateTxt();
+		};
 
 };

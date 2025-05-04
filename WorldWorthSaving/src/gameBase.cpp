@@ -195,13 +195,13 @@ void gameBase::update()
 	{
 
 		// PLANET
-		if (points == 8) 
+		if (points == 6) 
 		{
 			planet.grow();
 			points = 3; // reset to 3 as you said
 		}	
 		planet.update(dTime);
-		if (planet.getStage() >= 3 && points >= 7 && !sosSpawned)
+		if (planet.getStage() >= 3 && points >= 5 && !sosSpawned)
 		{
 			sosSprite.setPosition(500.f, 20.f);
 			sosSpawned = true;
@@ -319,8 +319,8 @@ void gameBase::render()
 			break;
 
 		case GameState::StartScreen:
-			//menuText.setString("Press ENTER to begin your mission.");
-			//menuText.setPosition(100.f, 600.f);
+			menuText.setString("");
+			menuText.setPosition(100.f, 600.f);
 			win->draw(screenSprite);
 			break;
 
@@ -664,8 +664,61 @@ void gameBase::handleMusic()
 			break;
 
 		case GameState::GameOver:
+			if (ev.key.code == sf::Keyboard::Enter) 
+			{
+				resetGame(); // ← add this
+				this->state = GameState::StartScreen;
+			}
+			break;
+
 		case GameState::Winner:
 			// Optional: you could continue GameMusic or play a separate one here
 			break;
 	}
+}
+
+void gameBase::resetGame()
+{
+	// Reset planet
+	planet.reset();
+
+	// Reset both players
+	const sf::Vector2f planetCenter = planet.getCenter();
+	const float planetRadius = planet.getRadius();
+	const float planetOffset = planet.getOffset();
+	playerA.reset(planetCenter, planetRadius, planetOffset);
+	playerB.reset(planetCenter, planetRadius, planetOffset);
+
+	// Clear bullets and enemies
+	bullets.clear();
+	enemies.clear();
+
+	// Reset item states
+	for (auto& it : items)
+		it.reset();
+
+	// Reset flags
+	hasBeenShot = false;
+	endingTriggered = false;
+	sosSpawned = false;
+	showEnding = false;
+
+	// Reset music flags
+	GameMusicStarted = false;
+	MenuMusicStarted = false;
+	StartMusicStarted = false;
+
+	// Reset text index and points
+	storyIndex = 0;
+	points = 3;
+
+	// Reset clocks
+	shootCooldown.restart();
+	enemySpawnClock.restart();
+	itemRespawnClock.restart();
+	deltaClock.restart();
+
+	// Reset movement keys
+	plA_left = plA_right = plA_up = plA_down = false;
+	plB_left = plB_right = plB_up = plB_down = false;
 }

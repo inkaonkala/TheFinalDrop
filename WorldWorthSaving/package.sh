@@ -1,69 +1,90 @@
 #!/bin/bash
 
-set -e  # Exit on error
+set -e
 
-PROJECT_NAME="JamsEscape"
+PROJECT_NAME="TheFinalDrops"
 BUILD_DIR="build"
-BUNDLE_DIR="game_bundle"
+BUNDLE_DIR="bundle"
+APP_NAME="${PROJECT_NAME}.app"
+APP_DIR="${BUNDLE_DIR}/${APP_NAME}"
 ZIP_FILE="${PROJECT_NAME}_mac.zip"
 
-# === Clean command ===
+# 🔧 Path to your local SFML 2.6.2 Frameworks (just built)
+SFML_FRAMEWORKS_DIR="../SFML-2.6.2/framework-install/Frameworks"
+
+# === Clean ===
 if [ "$1" == "clean" ]; then
-    echo "🧹 Cleaning build, bundle, and zip files..."
+    echo "🧹 Cleaning build, bundle, and zip..."
     rm -rf "$BUILD_DIR" "$BUNDLE_DIR" "$ZIP_FILE"
     echo "✅ Clean complete!"
     exit 0
 fi
 
-# === Build process ===
 echo "📦 Building project..."
 
-# Clean previous builds
 rm -rf "$BUILD_DIR" "$BUNDLE_DIR" "$ZIP_FILE"
-
-# Create build folder
 mkdir "$BUILD_DIR"
 cd "$BUILD_DIR"
-
-# Run CMake
-echo "⚙️ Running CMake..."
 cmake ..
-
-# Build the project
-echo "🛠️ Building project..."
 make -j
-
 cd ..
 
-# === Bundle creation ===
-echo "🎁 Preparing game bundle..."
-mkdir "$BUNDLE_DIR"
-cp "$BUILD_DIR/$PROJECT_NAME" "$BUNDLE_DIR/"
-cp -r assets "$BUNDLE_DIR/"
+# === Create .app bundle structure ===
+echo "🎁 Creating .app bundle..."
+mkdir -p "$APP_DIR/Contents/MacOS"
+mkdir -p "$APP_DIR/Contents/Resources/assets"
+mkdir -p "$APP_DIR/Contents/Frameworks"
 
-# === Copy SFML dynamic libraries ===
-echo "📦 Copying SFML .dylib files..."
-SFML_LIB_DIR="$BUILD_DIR/SFML/lib"
-SFML_DYLIBS=$(find "$SFML_LIB_DIR" -name "libsfml-*.dylib")
+# Copy game binary
+cp "$BUILD_DIR/$PROJECT_NAME" "$APP_DIR/Contents/MacOS/"
 
-for lib in $SFML_DYLIBS; do
-    cp "$lib" "$BUNDLE_DIR/"
+# Copy assets
+cp -r assets/* "$APP_DIR/Contents/Resources/assets/"
+
+# Copy SFML Frameworks
+echo "📦 Copying SFML 2.6.2 frameworks..."
+cp -R "$SFML_FRAMEWORKS_DIR"/SFML*.framework "$APP_DIR/Contents/Frameworks/"
+
+# Create Info.plist
+cat > "$APP_DIR/Contents/Info.plist" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>${PROJECT_NAME}</string>
+    <key>CFBundleExecutable</key>
+    <string>${PROJECT_NAME}</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.yourname.${PROJECT_NAME}</string>
+    <key>CFBundleVersion</key>
+    <string>1.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+</dict>
+</plist>
+EOF
+
+# === Fix SFML Framework Paths ===
+echo "🔧 Patching binary framework paths..."
+BIN="$APP_DIR/Contents/MacOS/$PROJECT_NAME"
+
+for framework in SFML SFMLGraphics SFMLWindow SFMLSystem SFMLAudio SFMLNetwork; do
+    install_name_tool -change \
+        "/Library/Frameworks/${framework}.framework/Versions/A/${framework}" \
+        "@executable_path/../Frameworks/${framework}.framework/Versions/A/${framework}" \
+        "$BIN" || echo "⚠️ Could not patch $framework (maybe not used)"
 done
 
-# === Remove quarantine flags ===
-echo "🚫 Removing quarantine flags from binary and libraries..."
+# === Remove Quarantine ===
+echo "🚫 Removing quarantine flags..."
+xattr -rd com.apple.quarantine "$APP_DIR" || true
 
-xattr -rd com.apple.quarantine "$BUNDLE_DIR/$PROJECT_NAME" || echo "⚠️ Could not remove from game binary"
+# === Zip it up ===
+echo "🗜️ Creating zip for itch.io..."
+cd "$BUNDLE_DIR"
+zip -r "../$ZIP_FILE" "$APP_NAME"
+cd ..
 
-for file in "$BUNDLE_DIR"/*.{dylib}; do
-    [ -e "$file" ] && xattr -rd com.apple.quarantine "$file" || true
-done
-
-# Optional: also clean quarantine from assets (fonts, music, etc.)
-find "$BUNDLE_DIR/assets" -exec xattr -rd com.apple.quarantine {} \; 2>/dev/null
-
-# === Zip the bundle ===
-echo "🗜️ Zipping..."
-zip -r "$ZIP_FILE" "$BUNDLE_DIR"
-
-echo "✅ Done! Game is ready to share: $ZIP_FILE"
+echo "✅ Done! Game ready to upload: $ZIP_FILE"

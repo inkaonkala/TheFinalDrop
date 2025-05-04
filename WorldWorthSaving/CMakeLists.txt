@@ -1,52 +1,42 @@
 cmake_minimum_required(VERSION 3.16)
-project(JamsEscape)
+project(TheFinalDrops)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# === Add SFML as a subdirectory ===
-# Disable macOS frameworks inside SFML
-set(SFML_USE_SYSTEM_DEPS ON)
-set(SFML_USE_SYSTEM_FREETYPE ON)
-set(SFML_USE_SYSTEM_OPENAL ON)
-
-add_subdirectory(SFML)
-
-
-# === Include SFML headers ===
-include_directories(SFML/include)
-
-# === Your source files ===
+# === Source files ===
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# === Create the game executable ===
-add_executable(JamsEscape ${SOURCES})
+# === Create executable ===
+add_executable(TheFinalDrops ${SOURCES})
 
+# === macOS SFML Framework setup ===
+# === macOS SFML Framework setup ===
+if(APPLE)
+    message(STATUS "Configuring for macOS with SFML Frameworks")
 
-# === Link to SFML statically ===
-target_link_libraries(JamsEscape
-    sfml-graphics
-    sfml-window
-    sfml-system
-	sfml-audio
-)
+    set(SFML_FRAMEWORKS_DIR "/Users/inka/Downloads/SFML-2.5.1-macOS-clang/Frameworks")
 
-set_target_properties(JamsEscape PROPERTIES
-    BUILD_RPATH "$ORIGIN"
-    INSTALL_RPATH "$ORIGIN"
-    BUILD_WITH_INSTALL_RPATH TRUE
-)
+    # Make includes like <SFML/Graphics.hpp> work
+    include_directories("${CMAKE_SOURCE_DIR}/sfml-shim")
 
+    # Tell the linker where to find SFML frameworks
+    target_link_options(TheFinalDrops PRIVATE -F "${SFML_FRAMEWORKS_DIR}")
 
-# === Copy SFML .so libraries and assets after build ===
-add_custom_command(TARGET JamsEscape POST_BUILD
+    # Link to the SFML frameworks
+    target_link_libraries(TheFinalDrops
+        "-framework SFML"
+        "-framework SFMLGraphics"
+        "-framework SFMLWindow"
+        "-framework SFMLSystem"
+        "-framework SFMLAudio"
+        "-framework SFMLNetwork"
+    )
+endif()
+
+# === Copy assets after build (for local dev runs) ===
+add_custom_command(TARGET TheFinalDrops POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:JamsEscape>/assets
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_BINARY_DIR}/SFML/lib/libsfml-graphics.so.2.6 $<TARGET_FILE_DIR:JamsEscape>
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_BINARY_DIR}/SFML/lib/libsfml-window.so.2.6 $<TARGET_FILE_DIR:JamsEscape>
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_BINARY_DIR}/SFML/lib/libsfml-system.so.2.6 $<TARGET_FILE_DIR:JamsEscape>
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_BINARY_DIR}/SFML/lib/libsfml-audio.so.2.6 $<TARGET_FILE_DIR:JamsEscape>
+        ${CMAKE_SOURCE_DIR}/assets
+        $<TARGET_FILE_DIR:TheFinalDrops>/assets
 )
+
