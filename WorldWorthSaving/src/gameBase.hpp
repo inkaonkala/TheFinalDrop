@@ -103,6 +103,7 @@ class gameBase
 			" ... ... ",
 			" BOOOOOOOOOOOOOOOOOOOOOM!", 
 			" The explosion sends the final drops to the space \n as well as your SOS-flare ...",
+			"",
 		};
 
 		sf::Music			storydMusic;
