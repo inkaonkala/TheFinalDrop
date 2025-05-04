@@ -201,7 +201,7 @@ void gameBase::update()
 			points = 3; // reset to 3 as you said
 		}	
 		planet.update(dTime);
-		if (planet.getStage() == 3 && points >= 8 && !sosSpawned)
+		if (planet.getStage() >= 3 && points >= 8 && !sosSpawned)
 		{
 			sosSprite.setPosition(500.f, 20.f);
 			sosSpawned = true;
@@ -560,12 +560,11 @@ void gameBase::handleEnemyCollision()
 		if (enemies[i].getBounds().intersects(playerABounds) ||
 			enemies[i].getBounds().intersects(playerBBounds))
 		{
+			points = std::max(0, points - 1);
 			enemies.erase(enemies.begin() + i); // Enemy disappears
 		}
 		else
-		{
 			++i;
-		}
 	}
 }
 
