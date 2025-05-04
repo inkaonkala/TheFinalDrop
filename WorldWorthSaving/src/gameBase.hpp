@@ -94,6 +94,7 @@ class gameBase
 		int storyIndex = 0;
 
 		std::vector<std::string> storyTxt = {
+			"Please, pless ENTER",
 			"The earth has dried out.",
 			"For the last desperate attempt \n an expedition has send to look for water.",
 			"You have travelled for weeks. ",
@@ -103,7 +104,7 @@ class gameBase
 			" ... ... ",
 			" BOOOOOOOOOOOOOOOOOOOOOM!", 
 			" The explosion sends the final drops to the space \n as well as your SOS-flare ...",
-			"",
+			""
 		};
 
 		sf::Music			storydMusic;
