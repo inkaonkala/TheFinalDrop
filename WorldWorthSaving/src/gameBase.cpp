@@ -70,6 +70,10 @@ void gameBase::init_var()
 		std::cerr << "Error: Could not open the music file\n";
 	else
 		storydMusic.setLoop(true);
+	if (!GameMusic.openFromFile("assets/gameM.wav"))
+		std::cerr << "Error: Could not open the music file\n";
+	else
+		storydMusic.setLoop(true);
 
 	
 }
