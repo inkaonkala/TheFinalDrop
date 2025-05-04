@@ -201,7 +201,7 @@ void gameBase::update()
 			points = 3; // reset to 3 as you said
 		}	
 		planet.update(dTime);
-		if (planet.getStage() >= 3 && points >= 8 && !sosSpawned)
+		if (planet.getStage() >= 3 && points >= 7 && !sosSpawned)
 		{
 			sosSprite.setPosition(500.f, 20.f);
 			sosSpawned = true;
