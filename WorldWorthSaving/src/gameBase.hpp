@@ -95,10 +95,14 @@ class gameBase
 
 		std::vector<std::string> storyTxt = {
 			"The earth has dried out.",
-//			"For the last desperate attempt an expedition has send to look for water.",
-//			"You have travelled for weeks. ",
-//			"And finally ...",
-//			"(Here I want to add animation of the planet exploding)"
+			"For the last desperate attempt \n an expedition has send to look for water.",
+			"You have travelled for weeks. ",
+			"And finally ... \n You have found a planet made off water",
+			"As you land on the wet surface the planet starts to shake",
+			" ... ",
+			" ... ... ",
+			" BOOOOOOOOOOOOOOOOOOOOOM!", 
+			" The explosion sends the final drops to the space \n as well as your SOS-flare ...",
 		};
 
 		sf::Music			storydMusic;

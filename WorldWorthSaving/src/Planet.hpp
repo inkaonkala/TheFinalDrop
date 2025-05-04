@@ -24,7 +24,7 @@ class Planet
 		sf::Texture texture3;
 		sf::Sprite sprite;
 
-		const float offset = 15.f;
+	//	const float offset = 15.f;
 		float 	visualRadius;
 
 		void updateTxt();

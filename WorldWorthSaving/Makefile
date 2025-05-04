@@ -8,7 +8,7 @@ CXXFLAGS = -std=c++17 -I$(INCLUDE_DIR) -Wall
 LDFLAGS = -L$(LIB_DIR) -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Name of the binary
-TARGET = WWS
+TARGET = TheFinalDrops
 
 # Source files in the src/ folder
 SRCS = $(wildcard src/*.cpp)

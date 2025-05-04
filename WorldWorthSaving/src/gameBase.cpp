@@ -634,7 +634,7 @@ void gameBase::handleMusic()
 	switch (state)
 	{
 		case GameState::Story:
-			if (!storydMusic.getStatus() == sf::Music::Playing)
+			if (storydMusic.getStatus() != sf::Music::Playing)
 			{
 				storydMusic.play();
 				MenuMusic.stop();
@@ -643,7 +643,7 @@ void gameBase::handleMusic()
 			break;
 
 		case GameState::StartScreen:
-			if (!MenuMusic.getStatus() == sf::Music::Playing)
+			if (MenuMusic.getStatus() != sf::Music::Playing)
 			{
 				MenuMusic.play();
 				storydMusic.stop();
@@ -652,7 +652,7 @@ void gameBase::handleMusic()
 			break;
 
 		case GameState::Playing:
-			if (!GameMusic.getStatus() == sf::Music::Playing)
+			if (GameMusic.getStatus() != sf::Music::Playing)
 			{
 				GameMusic.play();
 				MenuMusic.stop();
